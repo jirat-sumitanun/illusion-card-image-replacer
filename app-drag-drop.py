@@ -3,7 +3,7 @@ import sys
 from os import path as osPath ,getcwd as osGetcwd
 from shutil import copy as shutilCopy
 from PyQt5 import QtCore, QtGui, QtWidgets
-from appUi import Ui_Form
+from module.appUi import Ui_Form
 
 class MyApp(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -12,8 +12,6 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         # init default data
-        self.current_card = ''
-        self.current_replace_image = ''
         self.saveFilename = ''
         self.savePath = ''
         # init button event
@@ -22,45 +20,34 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.saveBtn.clicked.connect(self.save_file)
         self.ui.saveAsBtn.clicked.connect(self.save_file_as)
         self.ui.clearBtn.clicked.connect(self.clear_button_event)
+        self.ui.refreshFilenameBtn.clicked.connect(self.refreshFilename)
 
     def select_card_event(self):
-        self.current_card,filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Select card', filter="*png")
-        if self.current_card != "":
+        self.ui.card.path,filters = QtWidgets.QFileDialog.getOpenFileName(None, 'Select card', filter="*png")
+        if self.ui.card.path != "":
             self.ui.saveLabel.setText("")
-            self.saveFilename = 'new_{}'.format(self.current_card.split('/')[-1])
-            self.ui.filename.setText(self.saveFilename)
-            self.ui.card.setPixmap(
-                QtGui.QPixmap(
-                    "{}".format(self.current_card)
-                    ).scaled(self.ui.card.width(), self.ui.card.height(), QtCore.Qt.KeepAspectRatio)
-                )
+            self.ui.filename.setText('new_{}'.format(self.ui.card.path.split('/')[-1]))
+            self.ui.card.set_image(self.ui.card.path)
         else:
-            self.current_card = ""
             self.ui.filename.setText("")
-            self.ui.card.setText("card")
             self.ui.saveLabel.setText("")
+            self.ui.card.path = ""
 
     def select_replace_image_event(self):
-        self.current_replace_image,filters =  QtWidgets.QFileDialog.getOpenFileName(None, 'Select replace image', filter="*png")
-        if self.current_replace_image != "":
+        self.ui.replaceImage.path,filters =  QtWidgets.QFileDialog.getOpenFileName(None, 'Select replace image', filter="*png")
+        if self.ui.replaceImage.path != "":
             self.ui.saveLabel.setText("")
-            self.ui.replaceImage.setPixmap(
-                QtGui.QPixmap(
-                    "{}".format(self.current_replace_image)
-                    ).scaled(self.ui.replaceImage.width(), self.ui.replaceImage.height(), QtCore.Qt.KeepAspectRatioByExpanding)
-                )
+            self.ui.replaceImage.set_image(self.ui.replaceImage.path)
         else:
-            self.current_replace_image = ""
-            self.ui.replaceImage.setText("replace image")
             self.ui.saveLabel.setText("")
-    
+
     def save_file(self):
         if self.errorHandler():
             self.saveFilename = self.ui.filename.text()
             self.savePath = osPath.join(osGetcwd(), self.saveFilename)
             self.create_new_card()
             self.save_success_message()
-    
+
     def save_file_as(self):
         if self.errorHandler():
             self.saveFilename = self.ui.filename.text()
@@ -72,11 +59,13 @@ class MyApp(QtWidgets.QMainWindow):
 
     def create_new_card(self):
         try:
-            with open (self.current_card, 'rb') as f:
+            if not self.savePath.endswith(".png"):
+                self.savePath += ".png"
+            with open (self.ui.card.path, 'rb') as f:
                 s = f.read()
                 text = b"IEND\xaeB`\x82"
                 temp = s.split(text)
-                shutilCopy(self.current_replace_image ,self.savePath)
+                shutilCopy(self.ui.replaceImage.path ,self.savePath)
                 with open (self.savePath, 'ab') as newCard:
                     for i in range(1,len(temp)):
                         newCard.write(temp[i])
@@ -89,22 +78,24 @@ class MyApp(QtWidgets.QMainWindow):
 
     def clear_button_event(self):
         self.ui.saveLabel.setText("")
-        self.current_card = ""
         self.ui.filename.setText("")
-        self.ui.card.setText("card")
-        self.current_replace_image = ""
-        self.ui.replaceImage.setText("replace image")
+        self.ui.card.reset_data()
+        self.ui.replaceImage.reset_data()
+
+    def refreshFilename(self):
+        self.ui.filename.setText('new_{}'.format(self.ui.card.path.split('/')[-1]))
 
     def errorHandler(self):
-        if self.current_card == "":
+        if self.ui.card.path == "":
             QtWidgets.QMessageBox.warning(self, "Error", "import card")
             return False
-        if self.current_replace_image == "":
+        if self.ui.replaceImage.path == "":
             QtWidgets.QMessageBox.warning(self, "Error", "import replace image")
             return False
         if self.ui.filename.text() == "":
-            QtWidgets.QMessageBox.warning(self, "Error", "fill filename")
-            return False
+            if self.ui.card.path == "":
+                QtWidgets.QMessageBox.warning(self, "Error", "fill filename")
+                return False
         return True
 
 def main():

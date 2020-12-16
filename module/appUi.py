@@ -8,7 +8,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from module.qImageLabel import ImageLabel
+from module.qImageLabel2 import ImageLabel as ImageLabel2
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -18,26 +19,8 @@ class Ui_Form(object):
         Form.setMaximumSize(QtCore.QSize(922, 520))
         Form.setAcceptDrops(True)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("E:/Icon/Ico/Tamamo Icon 2.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("formidable01.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Form.setWindowIcon(icon)
-        self.card = QtWidgets.QLabel(Form)
-        self.card.setGeometry(QtCore.QRect(50, 20, 361, 361))
-        font = QtGui.QFont()
-        font.setPointSize(20)
-        self.card.setFont(font)
-        self.card.setAcceptDrops(True)
-        self.card.setFrameShape(QtWidgets.QFrame.Box)
-        self.card.setAlignment(QtCore.Qt.AlignCenter)
-        self.card.setObjectName("card")
-        self.replaceImage = QtWidgets.QLabel(Form)
-        self.replaceImage.setGeometry(QtCore.QRect(500, 20, 361, 361))
-        font = QtGui.QFont()
-        font.setPointSize(20)
-        self.replaceImage.setFont(font)
-        self.replaceImage.setAcceptDrops(True)
-        self.replaceImage.setFrameShape(QtWidgets.QFrame.Box)
-        self.replaceImage.setAlignment(QtCore.Qt.AlignCenter)
-        self.replaceImage.setObjectName("replaceImage")
         self.saveBtn = QtWidgets.QPushButton(Form)
         self.saveBtn.setGeometry(QtCore.QRect(590, 450, 100, 31))
         font = QtGui.QFont()
@@ -98,15 +81,26 @@ class Ui_Form(object):
         self.creditLabel = QtWidgets.QLabel(Form)
         self.creditLabel.setGeometry(QtCore.QRect(830, 500, 91, 16))
         self.creditLabel.setObjectName("creditLabel")
+        self.card = ImageLabel(Form)
+        self.replaceImage = ImageLabel2(Form)
+        self.gridLayoutWidget = QtWidgets.QWidget(Form)
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 30, 831, 361))
+        self.gridLayoutWidget.setObjectName("gridLayoutWidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setObjectName("gridLayout")
+        self.gridLayout.addWidget(self.card,0,0)
+        self.gridLayout.addWidget(self.replaceImage,0,1)
+        self.refreshFilenameBtn = QtWidgets.QPushButton(Form)
+        self.refreshFilenameBtn.setGeometry(QtCore.QRect(510, 400, 75, 31))
+        self.refreshFilenameBtn.setObjectName("refreshFilenameBtn")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Card image replacer"))
-        self.card.setText(_translate("Form", "card"))
-        self.replaceImage.setText(_translate("Form", "replace image"))
+        Form.setWindowTitle(_translate("Form", "Card image replacer v1.1"))
         self.saveBtn.setText(_translate("Form", "save"))
         self.saveAsBtn.setText(_translate("Form", "save as"))
         self.filename.setPlaceholderText(_translate("Form", "filename"))
@@ -115,6 +109,8 @@ class Ui_Form(object):
         self.selectCard.setText(_translate("Form", "select card"))
         self.clearBtn.setText(_translate("Form", "Clear"))
         self.creditLabel.setText(_translate("Form", "created by Jirat.S"))
+        self.refreshFilenameBtn.setText(_translate("Form", "refresh\n"
+"filename"))
 
 
 if __name__ == "__main__":
