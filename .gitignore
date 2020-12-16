@@ -1,0 +1,11 @@
+__pycache__
+.vscode
+build
+dist
+src
+*.spec
+*png
+*.bat
+*.ui
+*.txt
+*.ico
