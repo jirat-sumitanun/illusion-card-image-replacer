@@ -3,8 +3,7 @@ import sys
 from os import path as osPath ,getcwd as osGetcwd
 from shutil import copy as shutilCopy
 from PyQt5 import QtCore, QtGui, QtWidgets
-from main import Ui_Form
-from qImageLabel import ImageLabel
+from appUi import Ui_Form
 
 class MyApp(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
