@@ -37,11 +37,13 @@ class ImageLabel(QtWidgets.QLabel):
 
     def dropEvent(self, event):
         if event.mimeData().hasImage:
-            event.setDropAction(QtCore.Qt.CopyAction)
-            self.path = event.mimeData().urls()[0].toLocalFile()
-            self.set_image(self.path)
-            #self.path = file_path
-            event.accept()
+            if not event.mimeData().urls()[0].toLocalFile().endswith('.png'):
+                QtWidgets.QMessageBox.warning(self, "Error", "only png")
+            elif event.mimeData().urls()[0].toLocalFile().endswith('.png'):
+                event.setDropAction(QtCore.Qt.CopyAction)
+                self.path = event.mimeData().urls()[0].toLocalFile()
+                self.set_image(self.path)
+                event.accept()
         else:
             event.ignore()
 
@@ -51,6 +53,3 @@ class ImageLabel(QtWidgets.QLabel):
     def reset_data(self):
         self.setText('Replace image')
         self.path = ""
-    # def setPixmap(self, image):
-    #     print(image)
-    #     super().setPixmap(image.scaled(self.width(), self.height(), QtCore.Qt.KeepAspectRatioByExpanding))
