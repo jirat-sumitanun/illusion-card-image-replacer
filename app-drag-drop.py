@@ -93,6 +93,7 @@ class MyApp(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Error", "import replace image")
             return False
         if self.ui.filename.text() == "":
+            self.refreshFilename()
             if self.ui.card.path == "":
                 QtWidgets.QMessageBox.warning(self, "Error", "fill filename")
                 return False
